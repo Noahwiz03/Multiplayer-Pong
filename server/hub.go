@@ -17,9 +17,15 @@ func NewHub() *Hub {
 
 func (h *Hub)HubCreateRoom(player *Player) *Room{
 	room := CreateRoom(player)
+
 	h.Lock()
 	h.Rooms[room.Code] = room
 	h.Unlock()
+
 	return room
 	//add room to rooms map
+}
+
+func (h *Hub)HubDeleteRoom(room *Room){
+	delete(h.Rooms, room.Code)
 }

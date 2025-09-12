@@ -26,6 +26,7 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	player := &Player{
 		Conn: ws,
 		ID:   generatePlayerID(),
+		RoomCode: "",
 	}
 
 	fmt.Println("new player connected:", player.ID)
@@ -85,6 +86,8 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 			log.Println("error parsing createroomrequest:", err)
 			return
 		}
+
+		HandleRoomLeave(hub, player)
 		fmt.Println("Exited Room")
 
 	}
