@@ -1,6 +1,10 @@
 package server
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"strings"
+	"github.com/google/uuid"
+)
 
 type Player struct {
 	Conn *websocket.Conn
@@ -14,38 +18,18 @@ type Room struct {
 	Lobby     []*Player
 }
 
-// requests
-type CreateRoomRequest struct {
-	Type string `json:"type"`
-}
-type JoinRoomRequest struct {
-	Type     string `json:"type"`
-	RoomCode string `json:"roomCode"`
-}
-type JoinTeamRequest struct {
-	Type string `json:"type"`
-	Team string `json:"team"`
-}
-type LeaveRoomRequest struct {
-	Type string `json:"type"`
+func CreateRoom(player *Player) *Room{
+	roomCode := generateRoomCode()
+
+	room := &Room{
+		Code: roomCode,
+		LeftTeam: []*Player{},
+		RightTeam: []*Player{},
+		Lobby: []*Player{player},
+	}
+	return room
 }
 
-// responses
-type CreateRoomResp struct {
-	Type        string `json:"type"`
-	RoomCreated bool   `json:"roomCreated"`
-	RoomCode    string `json:"roomCode"`
-}
-type JoinRoomResp struct {
-	Type   string `json:"type"`
-	Joined bool   `json:"joined"`
-}
-type JoinTeamResp struct {
-	Type   string `json:"type"`
-	Joined bool   `json:"joined"`
-	Team   string `json:"team"`
-}
-type LeaveRoomResp struct {
-	Type     string `json:"type"`
-	LeftRoom bool   `json:"leftRoom"`
+func generateRoomCode() string {
+	return strings.ToUpper(uuid.New().String()[:6]) // e.g., "A1B2C3"
 }

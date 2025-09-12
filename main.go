@@ -8,8 +8,11 @@ import (
 )
 
 func main() {
+	hub := server.NewHub()
 
-	http.HandleFunc("/ws", server.HandleWS)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+			server.HandleWS(hub, w, r)
+		})
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)

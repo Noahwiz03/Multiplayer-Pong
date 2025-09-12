@@ -15,13 +15,14 @@ var upgrader = websocket.Upgrader{
 }
 
 // handles web sockets ovb
-func HandleWS(w http.ResponseWriter, r *http.Request) {
+func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer ws.Close()
+
 	player := &Player{
 		Conn: ws,
 		ID:   generatePlayerID(),
@@ -36,7 +37,7 @@ func HandleWS(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		fmt.Println("Recieved:", string(msg))
-		handleMessage(player, msg)
+		handleMessage(hub, player, msg)
 	}
 }
 
@@ -45,7 +46,7 @@ type MessageType struct {
 	Type string `json:"type"`
 }
 
-func handleMessage(player *Player, msg []byte) {
+func handleMessage(hub *Hub, player *Player, msg []byte) {
 	var msgType MessageType
 	err := json.Unmarshal(msg, &msgType)
 	if err != nil {
@@ -59,6 +60,8 @@ func handleMessage(player *Player, msg []byte) {
 			log.Println("error parsing createroomrequest:", err)
 			return
 		}
+
+		HandleRoomCreate(hub, player)
 		fmt.Println("room created")
 	case "joinRoom":
 		var req CreateRoomRequest
