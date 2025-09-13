@@ -20,9 +20,9 @@ document.getElementById("CreateRoomBtn").onclick = () =>{
 }
 
 document.getElementById("JoinRoomBtn").onclick = () =>{
-const  roomCode = document.getElementById("roomCode").value.trim();
-  ws.send(JSON.stringify({type: "joinRoom", roomCode: roomCode}));
-  console.log("sending:",JSON.stringify({type: "joinRoom", roomCode: roomCode}));
+const  roomcode = document.getElementById("roomCode").value.trim();
+  ws.send(JSON.stringify({type: "joinRoom", roomCode: roomcode}));
+  console.log("sending:",JSON.stringify({type: "joinRoom", roomCode: roomcode}));
   showPage("gameLobby"); 
 }
 

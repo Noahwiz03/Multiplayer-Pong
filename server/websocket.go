@@ -35,11 +35,13 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			fmt.Println("read error:", err)
+			HandleRoomLeave(hub, player)
 			break
 		}
 		fmt.Println("Recieved:", string(msg))
 		handleMessage(hub, player, msg)
 	}
+	//handle removing player of disconnected ws
 }
 
 // handles the json message based on its type
