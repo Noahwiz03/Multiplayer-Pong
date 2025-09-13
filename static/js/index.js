@@ -1,5 +1,6 @@
 window.onload = () =>{
 let ws = new WebSocket("http://localhost:8080/ws");
+
 ws.onopen =() =>{
   console.log("connected succesfully to server");
   ws.send("Hi from client");
@@ -17,23 +18,29 @@ document.getElementById("CreateRoomBtn").onclick = () =>{
   ws.send(JSON.stringify({type: "createRoom"}));
   showPage("gameLobby"); 
 }
+
 document.getElementById("JoinRoomBtn").onclick = () =>{
 const  roomCode = document.getElementById("roomCode").value.trim();
-  ws.send(JSON.stringify({type: "joinRoom", room: roomCode}));
+  ws.send(JSON.stringify({type: "joinRoom", roomCode: roomCode}));
+  console.log("sending:",JSON.stringify({type: "joinRoom", roomCode: roomCode}));
   showPage("gameLobby"); 
 }
+
 document.getElementById("joinLeftBtn").onclick = () => {
   ws.send(JSON.stringify({type: "joinTeam", team: "left"}));
   showPage("Game"); 
 }
+
 document.getElementById("joinRightBtn").onclick = () => {
   ws.send(JSON.stringify({type: "joinTeam", team: "right"}));
   showPage("Game"); 
 }
+
 document.getElementById("goBackBtn").onclick = () => {
   ws.send(JSON.stringify({type: "leaveRoom"}));
   showPage("landing");
 }
+
 document.getElementById("leaveGameBtn").onclick = () => {
   ws.send(JSON.stringify({type: "leaveRoom"}));
   showPage("landing");

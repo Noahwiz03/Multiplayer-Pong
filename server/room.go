@@ -1,9 +1,10 @@
 package server
 
 import (
-	"github.com/gorilla/websocket"
 	"strings"
+
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 )
 
 type Player struct {

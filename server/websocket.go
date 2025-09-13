@@ -54,22 +54,13 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 		log.Println("Invalid JSON", err)
 		return
 	}
+
 	switch msgType.Type {
 	case "createRoom":
-		var req CreateRoomRequest
-		if err := json.Unmarshal(msg, &req); err != nil {
-			log.Println("error parsing createroomrequest:", err)
-			return
-		}
-
 		HandleRoomCreate(hub, player)
 		fmt.Println("room created")
 	case "joinRoom":
-		var req CreateRoomRequest
-		if err := json.Unmarshal(msg, &req); err != nil {
-			log.Println("error parsing createroomrequest:", err)
-			return
-		}
+		HandleRoomJoin(hub, player, msg)
 		fmt.Println("Room Joined")
 
 	case "joinTeam":
@@ -81,15 +72,8 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 		fmt.Println("Team Joined")
 
 	case "leaveRoom":
-		var req CreateRoomRequest
-		if err := json.Unmarshal(msg, &req); err != nil {
-			log.Println("error parsing createroomrequest:", err)
-			return
-		}
-
 		HandleRoomLeave(hub, player)
 		fmt.Println("Exited Room")
-
 	}
 }
 

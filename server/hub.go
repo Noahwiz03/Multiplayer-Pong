@@ -23,7 +23,14 @@ func (h *Hub)HubCreateRoom(player *Player) *Room{
 	h.Unlock()
 
 	return room
-	//add room to rooms map
+}
+
+func (h *Hub)HubFindRoom(roomcode string) *Room{
+	room, exists := h.Rooms[roomcode]	
+	if !exists {
+		return nil
+	}
+	return room
 }
 
 func (h *Hub)HubDeleteRoom(room *Room){
