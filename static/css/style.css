@@ -1,2 +1,6 @@
 .page{display: none;}
 .active{display:block;}
+
+.pongGame{
+  background-color: black;
+}

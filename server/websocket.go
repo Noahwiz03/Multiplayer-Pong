@@ -26,7 +26,7 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	player := &Player{
 		Conn: ws,
 		ID:   generatePlayerID(),
-		RoomCode: "",
+		Room: nil,
 	}
 
 	fmt.Println("new player connected:", player.ID)
@@ -41,7 +41,6 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Recieved:", string(msg))
 		handleMessage(hub, player, msg)
 	}
-	//handle removing player of disconnected ws
 }
 
 // handles the json message based on its type
@@ -61,6 +60,7 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 	case "createRoom":
 		HandleRoomCreate(hub, player)
 		fmt.Println("room created")
+
 	case "joinRoom":
 		HandleRoomJoin(hub, player, msg)
 		fmt.Println("Room Joined")
@@ -71,6 +71,7 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 			log.Println("error parsing createroomrequest:", err)
 			return
 		}
+		HandleTeamJoin(hub, player, msg)
 		fmt.Println("Team Joined")
 
 	case "leaveRoom":

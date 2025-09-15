@@ -21,6 +21,7 @@ type CreateRoomResp struct {
 	Type        string `json:"type"`
 	RoomCreated bool   `json:"roomCreated"`
 	RoomCode    string `json:"roomCode"`
+	Host        bool   `json:"host"`
 }
 type JoinRoomResp struct {
 	Type   string `json:"type"`
@@ -34,4 +35,9 @@ type JoinTeamResp struct {
 type LeaveRoomResp struct {
 	Type     string `json:"type"`
 	LeftRoom bool   `json:"leftRoom"`
+	Host     bool   `json:"host"`
+}
+type HostReassignment struct {
+	Type string `json:"type"`
+	Host bool   `json:"host"`
 }

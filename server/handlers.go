@@ -6,91 +6,136 @@ import (
 	"log"
 )
 
-func HandleRoomCreate(hub *Hub, player *Player){
+func HandleRoomCreate(hub *Hub, player *Player) {
 	room := hub.HubCreateRoom(player)
 
-	player.RoomCode = room.Code
+	player.Room = room
 
 	resp := CreateRoomResp{
-		Type: "roomCreated",
+		Type:        "roomCreated",
 		RoomCreated: true,
-		RoomCode: room.Code,
+		RoomCode:    room.Code,
+		Host:        true,
 	}
 
-	fmt.Println("sent:",resp)
-	err:= player.Conn.WriteJSON(resp)
-	if err != nil{
+	fmt.Println("sent:", resp)
+	err := player.Conn.WriteJSON(resp)
+	if err != nil {
 		log.Println("error sending create room message:", err)
 	}
 }
 
-func HandleRoomJoin(hub *Hub, player *Player, msg []byte){
+func HandleRoomJoin(hub *Hub, player *Player, msg []byte) {
 	hub.Lock()
 	defer hub.Unlock()
 	var joinReq JoinRoomRequest
-	if err := json.Unmarshal(msg,&joinReq); err != nil{
+	if err := json.Unmarshal(msg, &joinReq); err != nil {
 		log.Println("error unmarshaling json:", err)
 	}
 
-  fmt.Println(joinReq.RoomCode)
+	fmt.Println(joinReq.RoomCode)
 	room := hub.HubFindRoom(joinReq.RoomCode)
 	if room == nil {
 		resp := JoinRoomResp{
-			Type: "joinedRoom",
-			Joined: false,	
-		} 
+			Type:   "joinedRoom",
+			Joined: false,
+		}
 
 		fmt.Println("sent:", resp)
 		err := player.Conn.WriteJSON(resp)
-		if err != nil{
+		if err != nil {
 			log.Println("error sending join room message:", err)
 		}
 		return
 	}
 
 	room.Lobby = append(room.Lobby, player)
-	player.RoomCode = room.Code
+	player.Room = room
 
 	resp := JoinRoomResp{
-		Type: "joinedRoom",
+		Type:   "joinedRoom",
 		Joined: true,
 	}
 
 	fmt.Println("sent:", resp)
 	err := player.Conn.WriteJSON(resp)
-	if err != nil{
+	if err != nil {
 		log.Println("error sending join room message:", err)
 	}
 }
 
+func HandleTeamJoin(hub *Hub, player *Player, msg []byte) {
+	var joinTeamReq JoinTeamRequest
+	if err := json.Unmarshal(msg, &joinTeamReq); err != nil {
+		log.Println("error unmarshaling json:", err)
+	}
 
-func HandleRoomLeave(hub *Hub, player *Player){
+	if joinTeamReq.Team == "left" {
+		player.Room.LeftTeam = append(player.Room.LeftTeam, player)
+		resp := JoinTeamResp{
+			Type:   "joinedTeam",
+			Joined: true,
+			Team:   "left",
+		}
+		err := player.Conn.WriteJSON(resp)
+		if err != nil {
+			log.Println("error sending team joined message:", err)
+		}
+		return
+	}
+	if joinTeamReq.Team == "right" {
+		player.Room.RightTeam = append(player.Room.RightTeam, player)
+		resp := JoinTeamResp{
+			Type:   "joinedTeam",
+			Joined: true,
+			Team:   "right",
+		}
+		err := player.Conn.WriteJSON(resp)
+		if err != nil {
+			log.Println("error sending team joined message:", err)
+		}
+		return
+	}
+}
+
+func HandleRoomLeave(hub *Hub, player *Player) {
 	hub.Lock()
 	defer hub.Unlock()
 
-	room, exists := hub.Rooms[player.RoomCode]
-	if !exists{
+	room := player.Room
+	if room == nil {
 		return
 	}
 
 	room.removePlayer(player)
-
+	if !room.isEmpty() {
+		if room.Host == player {
+			room.Host = room.Lobby[0]
+			resp := HostReassignment{
+				Type: "hostReassigned",
+				Host: true,
+			}
+			err := room.Lobby[0].Conn.WriteJSON(resp)
+			if err != nil {
+				log.Println("error sending reassinged host message:", err)
+			}
+		}
+	}
 	if room.isEmpty() {
 		hub.HubDeleteRoom(room)
 		fmt.Println("Room Deleted Because Empty")
 	}
 
-	player.RoomCode = ""
+	player.Room = nil
 
 	resp := LeaveRoomResp{
-		Type: "roomLeft",
-		LeftRoom: true,	
-	} 
+		Type:     "roomLeft",
+		LeftRoom: true,
+	}
 
-	fmt.Println("sent:",resp)
-	err:= player.Conn.WriteJSON(resp)
-	if err != nil{
+	fmt.Println("sent:", resp)
+	err := player.Conn.WriteJSON(resp)
+	if err != nil {
 		log.Println("error sending create room message:", err)
 	}
 }
-
