@@ -2,6 +2,8 @@ package server
 
 import (
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -20,6 +22,8 @@ type Room struct {
 	Lobby     []*Player
 	Host      *Player
 	GameState *GameState
+	done      chan bool
+	mutex     sync.RWMutex
 }
 
 type GameState struct {
@@ -45,19 +49,20 @@ type Ball struct {
 }
 
 func CreateRoom(player *Player) *Room {
+
 	roomCode := generateRoomCode()
 
 	gameState := GameState{
 		LeftPaddle: Paddle{
 			X:      30,
-			Y:      250,
-			Width:  20,
+			Y:      400,
+			Width:  10,
 			Height: 100,
 			Speed:  5,
 		},
 		RightPaddle: Paddle{
 			X:      750,
-			Y:      250,
+			Y:      400,
 			Width:  20,
 			Height: 100,
 			Speed:  5,
@@ -72,7 +77,6 @@ func CreateRoom(player *Player) *Room {
 		ScoreLeft:  0,
 		ScoreRight: 0,
 	}
-
 	room := &Room{
 		Code:      roomCode,
 		LeftTeam:  []*Player{},
@@ -80,7 +84,10 @@ func CreateRoom(player *Player) *Room {
 		Lobby:     []*Player{player},
 		Host:      player,
 		GameState: &gameState,
+		done:      make(chan bool),
 	}
+	// put this to where the start game btn will lead:
+	go room.gameLoop()
 	return room
 }
 
@@ -107,4 +114,29 @@ func generateRoomCode() string {
 	return strings.ToUpper(uuid.New().String()[:6]) // e.g., "A1B2C3"
 }
 
-//gamestate related things
+// gamestate related things
+// such as getting move requests! and sending out gamestate updates
+func (r *Room) gameLoop() {
+	ticker := time.NewTicker(16 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			r.updateGameState()
+			r.broadcastGameState()
+		case <-r.done:
+			return
+		}
+	}
+}
+func (r *Room) updateGameState() {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+	//the rest
+}
+
+func (r *Room) broadcastGameState() {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+	//the rest
+}

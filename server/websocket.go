@@ -59,11 +59,9 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 	switch msgType.Type {
 	case "createRoom":
 		HandleRoomCreate(hub, player)
-		fmt.Println("room created")
 
 	case "joinRoom":
 		HandleRoomJoin(hub, player, msg)
-		fmt.Println("Room Joined")
 
 	case "joinTeam":
 		var req CreateRoomRequest
@@ -72,11 +70,9 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 			return
 		}
 		HandleTeamJoin(hub, player, msg)
-		fmt.Println("Team Joined")
 
 	case "leaveRoom":
 		HandleRoomLeave(hub, player)
-		fmt.Println("Exited Room")
 	}
 }
 

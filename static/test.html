@@ -1,0 +1,101 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pong</title>
+  <style>
+    canvas {
+      background: black;
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pong" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById("pong");
+    const ctx = canvas.getContext("2d");
+
+    // Ball
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 5,
+      dx: 2,
+      dy: 2
+    };
+
+    // Paddles
+    const paddleHeight = 100, paddleWidth = 10;
+    const leftPaddle = { x: 20, y: canvas.height / 2 - paddleHeight / 2 };
+    const rightPaddle = { x: canvas.width - paddleWidth - 20, y: canvas.height / 2 - paddleHeight / 2 };
+
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+    }
+
+    function drawCircle(x, y, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function resetBall() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = -ball.dx;
+    }
+
+    function update() {
+      // Move ball
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Top/bottom wall collision
+      if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+        ball.dy = -ball.dy;
+      }
+
+      // Left paddle collision
+      if (ball.x - ball.radius < leftPaddle.x + paddleWidth &&
+          ball.y > leftPaddle.y && ball.y < leftPaddle.y + paddleHeight) {
+        ball.dx = -ball.dx;
+      }
+
+      // Right paddle collision
+      if (ball.x + ball.radius > rightPaddle.x &&
+          ball.y > rightPaddle.y && ball.y < rightPaddle.y + paddleHeight) {
+        ball.dx = -ball.dx;
+      }
+
+      // Left/right wall = reset
+      if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+        resetBall();
+      }
+    }
+
+    function render() {
+      // Clear canvas
+      drawRect(0, 0, canvas.width, canvas.height, "black");
+
+      // Draw paddles
+      drawRect(leftPaddle.x, leftPaddle.y, paddleWidth, paddleHeight, "white");
+      drawRect(rightPaddle.x, rightPaddle.y, paddleWidth, paddleHeight, "white");
+
+      // Draw ball
+      drawCircle(ball.x, ball.y, ball.radius, "white");
+    }
+
+    function game() {
+      update();
+      render();
+    }
+
+    setInterval(game, 1000 / 60); // 60 FPS
+  </script>
+</body>
+</html>

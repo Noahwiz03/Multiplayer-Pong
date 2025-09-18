@@ -8,7 +8,6 @@ import (
 
 func HandleRoomCreate(hub *Hub, player *Player) {
 	room := hub.HubCreateRoom(player)
-
 	player.Room = room
 
 	resp := CreateRoomResp{
@@ -17,11 +16,18 @@ func HandleRoomCreate(hub *Hub, player *Player) {
 		RoomCode:    room.Code,
 		Host:        true,
 	}
-
 	fmt.Println("sent:", resp)
 	err := player.Conn.WriteJSON(resp)
 	if err != nil {
 		log.Println("error sending create room message:", err)
+	}
+	resp2 := GameStateResp{
+		Type:      "gameState",
+		GameState: *room.GameState,
+	}
+	err2 := player.Conn.WriteJSON(resp2)
+	if err2 != nil {
+		log.Println("error sending Game State from create room:", err2)
 	}
 }
 
@@ -112,8 +118,9 @@ func HandleRoomLeave(hub *Hub, player *Player) {
 		if room.Host == player {
 			room.Host = room.Lobby[0]
 			resp := HostReassignment{
-				Type: "hostReassigned",
-				Host: true,
+				Type:     "hostReassigned",
+				Host:     true,
+				RoomCode: room.Code,
 			}
 			err := room.Lobby[0].Conn.WriteJSON(resp)
 			if err != nil {

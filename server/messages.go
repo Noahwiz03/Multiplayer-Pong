@@ -15,6 +15,10 @@ type JoinTeamRequest struct {
 type LeaveRoomRequest struct {
 	Type string `json:"type"`
 }
+type MoveVoteRequest struct {
+	Type      string `json:"type"`
+	Direction int    `json:"direction"` // 1 up 0 down? maybe will change
+}
 
 // responses
 type CreateRoomResp struct {
@@ -38,6 +42,11 @@ type LeaveRoomResp struct {
 	Host     bool   `json:"host"`
 }
 type HostReassignment struct {
-	Type string `json:"type"`
-	Host bool   `json:"host"`
+	Type     string `json:"type"`
+	Host     bool   `json:"host"`
+	RoomCode string `json:"roomCode"`
+}
+type GameStateResp struct {
+	Type      string    `json:"type"`
+	GameState GameState `json:"gameState"`
 }

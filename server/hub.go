@@ -15,7 +15,7 @@ func NewHub() *Hub {
 	}
 }
 
-func (h *Hub)HubCreateRoom(player *Player) *Room{
+func (h *Hub) HubCreateRoom(player *Player) *Room {
 	room := CreateRoom(player)
 
 	h.Lock()
@@ -25,14 +25,15 @@ func (h *Hub)HubCreateRoom(player *Player) *Room{
 	return room
 }
 
-func (h *Hub)HubFindRoom(roomcode string) *Room{
-	room, exists := h.Rooms[roomcode]	
+func (h *Hub) HubFindRoom(roomcode string) *Room {
+	room, exists := h.Rooms[roomcode]
 	if !exists {
 		return nil
 	}
 	return room
 }
 
-func (h *Hub)HubDeleteRoom(room *Room){
+func (h *Hub) HubDeleteRoom(room *Room) {
+	room.done <- true
 	delete(h.Rooms, room.Code)
 }
