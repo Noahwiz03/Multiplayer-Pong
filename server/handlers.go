@@ -129,6 +129,10 @@ func HandleRoomLeave(hub *Hub, player *Player) {
 		}
 	}
 	if room.isEmpty() {
+		if room.gameRunning {
+			fmt.Println("rooms about to be done")
+			room.done <- true
+		}
 		hub.HubDeleteRoom(room)
 		fmt.Println("Room Deleted Because Empty")
 	}
@@ -144,5 +148,13 @@ func HandleRoomLeave(hub *Hub, player *Player) {
 	err := player.Conn.WriteJSON(resp)
 	if err != nil {
 		log.Println("error sending create room message:", err)
+	}
+}
+
+func HandleGameStart(hub *Hub, player *Player) {
+	if player.Room != nil && player.Room.Host == player && !player.Room.gameRunning {
+		player.Room.gameRunning = true
+		go player.Room.gameLoop()
+		log.Println("go routine started for ", player.Room.Code)
 	}
 }

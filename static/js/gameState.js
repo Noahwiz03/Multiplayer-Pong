@@ -24,3 +24,5 @@ const Ball = {
 	VelocityX,
 	VelocityY,
 }
+
+//render gamestate into canvas!

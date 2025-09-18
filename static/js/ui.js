@@ -25,6 +25,9 @@ export function setupUI(sendMessage){
   document.getElementById("leaveGameBtn").onclick = () => {
     sendMessage("leaveRoom");
   }
-
+  
   document.getElementById("StartGameBtn").style.display = 'none';
+  document.getElementById("StartGameBtn").onclick = () => {
+    sendMessage("gameStart");
+  }
 }

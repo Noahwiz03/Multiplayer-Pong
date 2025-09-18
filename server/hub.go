@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -34,6 +35,13 @@ func (h *Hub) HubFindRoom(roomcode string) *Room {
 }
 
 func (h *Hub) HubDeleteRoom(room *Room) {
-	room.done <- true
+	fmt.Println("made it into hubdelete room")
+	select {
+	case room.done <- true:
+		fmt.Println("sent done signal to goroutine")
+	default:
+		fmt.Println("goroutine already stopped or not running")
+	}
 	delete(h.Rooms, room.Code)
+	fmt.Println("room deleted from hub")
 }

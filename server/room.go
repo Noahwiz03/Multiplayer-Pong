@@ -16,14 +16,15 @@ type Player struct {
 }
 
 type Room struct {
-	Code      string
-	LeftTeam  []*Player
-	RightTeam []*Player
-	Lobby     []*Player
-	Host      *Player
-	GameState *GameState
-	done      chan bool
-	mutex     sync.RWMutex
+	Code        string
+	LeftTeam    []*Player
+	RightTeam   []*Player
+	Lobby       []*Player
+	Host        *Player
+	GameState   *GameState
+	done        chan bool
+	mutex       sync.RWMutex
+	gameRunning bool
 }
 
 type GameState struct {
@@ -78,16 +79,15 @@ func CreateRoom(player *Player) *Room {
 		ScoreRight: 0,
 	}
 	room := &Room{
-		Code:      roomCode,
-		LeftTeam:  []*Player{},
-		RightTeam: []*Player{},
-		Lobby:     []*Player{player},
-		Host:      player,
-		GameState: &gameState,
-		done:      make(chan bool),
+		Code:        roomCode,
+		LeftTeam:    []*Player{},
+		RightTeam:   []*Player{},
+		Lobby:       []*Player{player},
+		Host:        player,
+		GameState:   &gameState,
+		done:        make(chan bool, 1),
+		gameRunning: false,
 	}
-	// put this to where the start game btn will lead:
-	go room.gameLoop()
 	return room
 }
 

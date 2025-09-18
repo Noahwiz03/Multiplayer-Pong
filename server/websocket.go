@@ -73,6 +73,9 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 
 	case "leaveRoom":
 		HandleRoomLeave(hub, player)
+
+	case "gameStart":
+		HandleGameStart(hub, player)
 	}
 }
 
