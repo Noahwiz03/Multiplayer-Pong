@@ -17,7 +17,7 @@ type LeaveRoomRequest struct {
 }
 type MoveVoteRequest struct {
 	Type      string `json:"type"`
-	Direction int    `json:"direction"` // 1 up 0 down? maybe will change
+	Direction int    `json:"direction"` // 1 up 0 nothing -1 down
 }
 
 // responses

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"strings"
 	"sync"
 	"time"
@@ -13,6 +14,7 @@ type Player struct {
 	Conn *websocket.Conn
 	ID   string
 	Room *Room
+	move int //1 up 0 no move -1 down
 }
 
 type Room struct {
@@ -64,7 +66,7 @@ func CreateRoom(player *Player) *Room {
 		RightPaddle: Paddle{
 			X:      750,
 			Y:      400,
-			Width:  20,
+			Width:  10,
 			Height: 100,
 			Speed:  5,
 		},
@@ -119,6 +121,9 @@ func generateRoomCode() string {
 func (r *Room) gameLoop() {
 	ticker := time.NewTicker(16 * time.Millisecond)
 	defer ticker.Stop()
+	r.GameState.Ball.VelocityX = 4
+	r.GameState.Ball.VelocityY = 2
+
 	for {
 		select {
 		case <-ticker.C:
@@ -129,14 +134,56 @@ func (r *Room) gameLoop() {
 		}
 	}
 }
+
 func (r *Room) updateGameState() {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	//the rest
+
+	leftMoveTally := 0
+	rightMoveTally := 0
+
+	//have to actuall add logic for ball movement
+	r.GameState.Ball.X += r.GameState.Ball.VelocityX
+	r.GameState.Ball.Y += r.GameState.Ball.VelocityY
+
+	for i := 0; i < len(r.RightTeam); i++ {
+		rightMoveTally += r.RightTeam[i].move
+	}
+
+	for i := 0; i < len(r.LeftTeam); i++ {
+		leftMoveTally += r.LeftTeam[i].move
+	}
+
+	//make the paddle move
+	if rightMoveTally < 0 {
+		r.GameState.RightPaddle.Y += r.GameState.RightPaddle.Speed
+	}
+	if rightMoveTally > 0 {
+		r.GameState.RightPaddle.Y -= r.GameState.RightPaddle.Speed
+	}
+
+	if leftMoveTally < 0 {
+		r.GameState.LeftPaddle.Y += r.GameState.LeftPaddle.Speed
+	}
+	if leftMoveTally > 0 {
+		r.GameState.LeftPaddle.Y -= r.GameState.LeftPaddle.Speed
+	}
+
 }
 
 func (r *Room) broadcastGameState() {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	//the rest
+
+	resp := GameStateResp{
+		Type:      "gameState",
+		GameState: *r.GameState,
+	}
+
+	for i := 0; i < len(r.Lobby); i++ {
+		err := r.Lobby[i].Conn.WriteJSON(resp)
+		if err != nil {
+			log.Println("error broadcasting gamestate:", err)
+		}
+	}
 }

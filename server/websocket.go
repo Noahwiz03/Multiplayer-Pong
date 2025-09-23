@@ -27,6 +27,7 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		Conn: ws,
 		ID:   generatePlayerID(),
 		Room: nil,
+		move: 0,
 	}
 
 	fmt.Println("new player connected:", player.ID)
@@ -76,6 +77,9 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 
 	case "gameStart":
 		HandleGameStart(hub, player)
+
+	case "moveUpdate":
+		HandleMoveUpdate(hub, player, msg)
 	}
 }
 

@@ -1,3 +1,5 @@
+import { renderGameState } from "./gameState.js";
+
 export function handleRoomCreated(msg){
   console.log("we made it here...", msg)
   if(msg.roomCreated){
@@ -45,10 +47,11 @@ export function handleHostReassigned(msg){
 }
 
 export function handleGameState(msg){
- //send info needed to render game to canvas 
+  renderGameState(msg);
 }
 
 function showPage(pageId){
   console.log("showing the page now")
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active"); }
+  document.getElementById(pageId).classList.add("active"); 
+}

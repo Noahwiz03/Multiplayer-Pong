@@ -158,3 +158,13 @@ func HandleGameStart(hub *Hub, player *Player) {
 		log.Println("go routine started for ", player.Room.Code)
 	}
 }
+
+func HandleMoveUpdate(hub *Hub, player *Player, msg []byte) {
+	var move MoveVoteRequest
+	err := json.Unmarshal(msg, &move)
+	if err != nil {
+		log.Println("error with unmarshaling json:", err)
+	}
+
+	player.move = move.Direction
+}

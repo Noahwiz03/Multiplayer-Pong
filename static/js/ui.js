@@ -25,6 +25,21 @@ export function setupUI(sendMessage){
   document.getElementById("leaveGameBtn").onclick = () => {
     sendMessage("leaveRoom");
   }
+
+  document.addEventListener('keydown', (event) =>{
+    if(event.key == 'w'){
+      sendMessage("moveUpdate", {direction: 1});
+    }
+    if(event.key == 's'){
+      sendMessage("moveUpdate",{direction: -1});
+    }
+  })
+
+  document.addEventListener('keyup', (event) =>{
+    if(event.key == 'w' || event.key == 's'){
+      sendMessage("moveUpdate",{direction: 0});
+    }
+  })
   
   document.getElementById("StartGameBtn").style.display = 'none';
   document.getElementById("StartGameBtn").onclick = () => {
