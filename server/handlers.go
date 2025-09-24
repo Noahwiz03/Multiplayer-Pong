@@ -168,3 +168,14 @@ func HandleMoveUpdate(hub *Hub, player *Player, msg []byte) {
 
 	player.move = move.Direction
 }
+
+func HandleGameToLobby(hub *Hub, player *Player) {
+	player.Room.done <- true
+	for _, p := range player.Room.LeftTeam {
+		removePlayerFromSlice(player.Room.LeftTeam, p)
+	}
+	for _, p := range player.Room.RightTeam {
+		removePlayerFromSlice(player.Room.RightTeam, p)
+	}
+	//finish the rest of the handling, such as sending messgage back to client
+}

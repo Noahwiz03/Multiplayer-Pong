@@ -57,15 +57,15 @@ func CreateRoom(player *Player) *Room {
 
 	gameState := GameState{
 		LeftPaddle: Paddle{
-			X:      30,
-			Y:      400,
+			X:      30,  //top left
+			Y:      250, //top left
 			Width:  10,
 			Height: 100,
 			Speed:  5,
 		},
 		RightPaddle: Paddle{
 			X:      750,
-			Y:      400,
+			Y:      250,
 			Width:  10,
 			Height: 100,
 			Speed:  5,
@@ -142,7 +142,38 @@ func (r *Room) updateGameState() {
 	leftMoveTally := 0
 	rightMoveTally := 0
 
-	//have to actuall add logic for ball movement
+	//ball collision with paddles
+	if ballPaddleCollision(int(r.GameState.Ball.X), int(r.GameState.Ball.Y), int(r.GameState.Ball.Radius),
+		int(r.GameState.LeftPaddle.X), int(r.GameState.LeftPaddle.Y), int(r.GameState.LeftPaddle.Width),
+		int(r.GameState.LeftPaddle.Height)) {
+		r.GameState.Ball.VelocityX *= -1
+	}
+	if ballPaddleCollision(int(r.GameState.Ball.X), int(r.GameState.Ball.Y), int(r.GameState.Ball.Radius),
+		int(r.GameState.RightPaddle.X), int(r.GameState.RightPaddle.Y), int(r.GameState.RightPaddle.Width),
+		int(r.GameState.RightPaddle.Height)) {
+		r.GameState.Ball.VelocityX *= -1
+	}
+
+	//ball collision with top and bottom
+	if r.GameState.Ball.Y-r.GameState.Ball.Radius <= 0 {
+		r.GameState.Ball.VelocityY *= -1
+	}
+	if r.GameState.Ball.Y+r.GameState.Ball.Radius >= 600 {
+		r.GameState.Ball.VelocityY *= -1
+	}
+
+	//ball scoreing
+	if r.GameState.Ball.X-r.GameState.Ball.Radius <= 0 {
+		r.GameState.ScoreRight++
+		r.GameState.Ball.X = 400
+		r.GameState.Ball.Y = 300
+	}
+	if r.GameState.Ball.X+r.GameState.Ball.Radius >= 800 {
+		r.GameState.ScoreLeft++
+		r.GameState.Ball.X = 400
+		r.GameState.Ball.Y = 300
+	}
+
 	r.GameState.Ball.X += r.GameState.Ball.VelocityX
 	r.GameState.Ball.Y += r.GameState.Ball.VelocityY
 
@@ -155,20 +186,30 @@ func (r *Room) updateGameState() {
 	}
 
 	//make the paddle move
-	if rightMoveTally < 0 {
+	if rightMoveTally < 0 && r.GameState.RightPaddle.Y+100 < 600 {
 		r.GameState.RightPaddle.Y += r.GameState.RightPaddle.Speed
 	}
-	if rightMoveTally > 0 {
+	if rightMoveTally > 0 && r.GameState.RightPaddle.Y > 0 {
 		r.GameState.RightPaddle.Y -= r.GameState.RightPaddle.Speed
 	}
 
-	if leftMoveTally < 0 {
+	if leftMoveTally < 0 && r.GameState.LeftPaddle.Y+100 < 600 {
 		r.GameState.LeftPaddle.Y += r.GameState.LeftPaddle.Speed
 	}
-	if leftMoveTally > 0 {
+	if leftMoveTally > 0 && r.GameState.LeftPaddle.Y > 0 {
 		r.GameState.LeftPaddle.Y -= r.GameState.LeftPaddle.Speed
 	}
 
+}
+
+func ballPaddleCollision(bx int, by int, r int, rx int, ry int, rw int, rh int) bool {
+	closestX := max(rx, min(bx, rx+rw))
+	closestY := max(ry, min(by, ry+rh))
+
+	dx := bx - closestX
+	dy := by - closestY
+
+	return (dx*dx + dy*dy) <= r*r
 }
 
 func (r *Room) broadcastGameState() {

@@ -26,6 +26,9 @@ const GameState = {
 }
 
 
+ctx.fillStyle = "white";
+ctx.font = '30px Arial';
+
 //render gamestate into canvas!
 export function renderGameState(msg){
 
@@ -33,11 +36,12 @@ export function renderGameState(msg){
 	Object.assign(GameState.LeftPaddle, state.LeftPaddle);
 	Object.assign(GameState.RightPaddle, state.RightPaddle);
 	Object.assign(GameState.Ball, state.Ball);
-	Object.assign(GameState.ScoreLeft , state.ScoreLeft);
-	Object.assign(GameState.ScoreRight , state.ScoreRight);
+	GameState.ScoreLeft = state.ScoreLeft;
+	GameState.ScoreRight = state.ScoreRight;
 
-	ctx.fillStyle = "white";
 	ctx.clearRect(0,0, canvas.width, canvas.height);
+	ctx.fillText(GameState.ScoreLeft.toString(), 250, 50);
+	ctx.fillText(GameState.ScoreRight.toString(), 550, 50);
 
 	ctx.fillRect(GameState.LeftPaddle.X, GameState.LeftPaddle.Y, GameState.LeftPaddle.Width, GameState.LeftPaddle.Height);
 	ctx.fillRect(GameState.RightPaddle.X, GameState.RightPaddle.Y, GameState.RightPaddle.Width, GameState.RightPaddle.Height);

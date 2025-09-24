@@ -80,6 +80,8 @@ func handleMessage(hub *Hub, player *Player, msg []byte) {
 
 	case "moveUpdate":
 		HandleMoveUpdate(hub, player, msg)
+	case "gameToLobby":
+		HandleGameToLobby(hub, player)
 	}
 }
 

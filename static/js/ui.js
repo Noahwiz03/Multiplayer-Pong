@@ -26,6 +26,9 @@ export function setupUI(sendMessage){
     sendMessage("leaveRoom");
   }
 
+  document.getElementById("returnGameToLobbyBtn").onclick = () =>{
+    sendMessage("gameToLobby");
+  }
   document.addEventListener('keydown', (event) =>{
     if(event.key == 'w'){
       sendMessage("moveUpdate", {direction: 1});
