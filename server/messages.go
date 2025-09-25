@@ -50,3 +50,6 @@ type GameStateResp struct {
 	Type      string    `json:"type"`
 	GameState GameState `json:"gameState"`
 }
+type ReturnToLobby struct {
+	Type string `json:"type"`
+}

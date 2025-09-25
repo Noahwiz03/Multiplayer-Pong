@@ -171,11 +171,54 @@ func HandleMoveUpdate(hub *Hub, player *Player, msg []byte) {
 
 func HandleGameToLobby(hub *Hub, player *Player) {
 	player.Room.done <- true
-	for _, p := range player.Room.LeftTeam {
-		removePlayerFromSlice(player.Room.LeftTeam, p)
+	player.Room.gameRunning = false
+
+	player.Room.LeftTeam = player.Room.LeftTeam[:0]
+	player.Room.RightTeam = player.Room.RightTeam[:0]
+
+	resp := ReturnToLobby{
+		Type: "returnToLobby",
 	}
-	for _, p := range player.Room.RightTeam {
-		removePlayerFromSlice(player.Room.RightTeam, p)
+
+	gameState := GameState{
+		LeftPaddle: Paddle{
+			X:      30,  //top left
+			Y:      250, //top left
+			Width:  10,
+			Height: 100,
+			Speed:  5,
+		},
+		RightPaddle: Paddle{
+			X:      750,
+			Y:      250,
+			Width:  10,
+			Height: 100,
+			Speed:  5,
+		},
+		Ball: Ball{
+			X:         400,
+			Y:         300,
+			Radius:    10,
+			VelocityX: 0,
+			VelocityY: 0,
+		},
+		ScoreLeft:  0,
+		ScoreRight: 0,
 	}
-	//finish the rest of the handling, such as sending messgage back to client
+	gameStateResp := GameStateResp{
+		Type:      "gameState",
+		GameState: gameState,
+	}
+
+	for i := 0; i < len(player.Room.Lobby); i++ {
+		err := player.Room.Lobby[i].Conn.WriteJSON(resp)
+		if err != nil {
+			log.Println("error broadcasting gamestate:", err)
+		}
+
+		err1 := player.Room.Lobby[i].Conn.WriteJSON(gameStateResp)
+		if err1 != nil {
+			log.Println("error broadcasting gamestate:", err1)
+		}
+	}
 }

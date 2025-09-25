@@ -31,6 +31,9 @@ ws.onmessage = e => {
     case "gameState":
       handlers.handleGameState(msg);
       break;
+    case "returnToLobby":
+      handlers.handleReturnToLobby();
+      break;
   }
 }
 

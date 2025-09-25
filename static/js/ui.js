@@ -26,9 +26,6 @@ export function setupUI(sendMessage){
     sendMessage("leaveRoom");
   }
 
-  document.getElementById("returnGameToLobbyBtn").onclick = () =>{
-    sendMessage("gameToLobby");
-  }
   document.addEventListener('keydown', (event) =>{
     if(event.key == 'w'){
       sendMessage("moveUpdate", {direction: 1});
@@ -44,6 +41,10 @@ export function setupUI(sendMessage){
     }
   })
   
+  document.getElementById("ReturnGameToLobbyBtn").style.display = 'none';
+  document.getElementById("ReturnGameToLobbyBtn").onclick = () => {
+  sendMessage("gameToLobby");
+ }
   document.getElementById("StartGameBtn").style.display = 'none';
   document.getElementById("StartGameBtn").onclick = () => {
     sendMessage("gameStart");

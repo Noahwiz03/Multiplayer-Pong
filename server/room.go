@@ -220,7 +220,6 @@ func (r *Room) broadcastGameState() {
 		Type:      "gameState",
 		GameState: *r.GameState,
 	}
-
 	for i := 0; i < len(r.Lobby); i++ {
 		err := r.Lobby[i].Conn.WriteJSON(resp)
 		if err != nil {
