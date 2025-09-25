@@ -205,6 +205,8 @@ func HandleGameToLobby(hub *Hub, player *Player) {
 		ScoreLeft:  0,
 		ScoreRight: 0,
 	}
+
+	player.Room.GameState = &gameState
 	gameStateResp := GameStateResp{
 		Type:      "gameState",
 		GameState: gameState,
