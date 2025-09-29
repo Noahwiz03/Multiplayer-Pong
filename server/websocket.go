@@ -21,27 +21,21 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	defer ws.Close()
+	// Don't close connection here - readPump handles it
 
 	player := &Player{
 		Conn: ws,
 		ID:   generatePlayerID(),
 		Room: nil,
 		move: 0,
+		send: make(chan []byte, 256),
+		done: make(chan struct{}),
 	}
 
 	fmt.Println("new player connected:", player.ID)
+	go player.readPump(hub)
+	go player.writePump()
 
-	for {
-		_, msg, err := ws.ReadMessage()
-		if err != nil {
-			fmt.Println("read error:", err)
-			HandleRoomLeave(hub, player)
-			break
-		}
-		fmt.Println("Recieved:", string(msg))
-		handleMessage(hub, player, msg)
-	}
 }
 
 // handles the json message based on its type

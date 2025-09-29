@@ -15,6 +15,8 @@ type Player struct {
 	ID   string
 	Room *Room
 	move int //1 up 0 no move -1 down
+	send chan []byte
+	done chan struct{}
 }
 
 type Room struct {
@@ -221,7 +223,7 @@ func (r *Room) broadcastGameState() {
 		GameState: *r.GameState,
 	}
 	for i := 0; i < len(r.Lobby); i++ {
-		err := r.Lobby[i].Conn.WriteJSON(resp)
+		err := r.Lobby[i].SendJSON(resp)
 		if err != nil {
 			log.Println("error broadcasting gamestate:", err)
 		}
