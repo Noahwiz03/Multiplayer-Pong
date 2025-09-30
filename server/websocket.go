@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -31,6 +32,13 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		send: make(chan []byte, 256),
 		done: make(chan struct{}),
 	}
+
+	// Set pong handler to reset read deadline when pong is received
+	ws.SetPongHandler(func(string) error {
+		fmt.Printf("Received pong from player %s\n", player.ID)
+		ws.SetReadDeadline(time.Now().Add(70 * time.Second))
+		return nil
+	})
 
 	fmt.Println("new player connected:", player.ID)
 	go player.readPump(hub)

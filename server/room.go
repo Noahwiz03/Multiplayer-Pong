@@ -7,17 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 )
-
-type Player struct {
-	Conn *websocket.Conn
-	ID   string
-	Room *Room
-	move int //1 up 0 no move -1 down
-	send chan []byte
-	done chan struct{}
-}
 
 type Room struct {
 	Code        string
