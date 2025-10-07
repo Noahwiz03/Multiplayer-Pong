@@ -22,10 +22,11 @@ export function handleRoomCreated(msg){
 
 export function handleRoomJoined(msg){
  if(msg.joined){
-    showPage("gameLobby"); 
+    showPage("gameLobby");
+    uiState.setRoomCode(msg.roomCode);  
   }
   if(!uiState.isHost()){
-      document.getElementById("roomcodeDisplay").textContent = "RoomCode: ";
+      document.getElementById("roomcodeDisplay").textContent = "RoomCode: " + uiState.getRoomCode();
       document.getElementById("hostDetector").textContent = "";
       document.getElementById("StartGameBtn").style.display = 'none';
       document.getElementById("ReturnGameToLobbyBtn").style.display = 'none';
@@ -60,9 +61,10 @@ export function handleGameState(msg){
 
 export function handleReturnToLobby(){
   if(uiState.isHost()){
-    document.getElementById("roomcodeDisplay").textContent = "RoomCode: " + uiState.getRoomCode(); 
     document.getElementById("hostDetector").textContent = "You are the Host";
   }
+
+  document.getElementById("roomcodeDisplay").textContent = "RoomCode: " + uiState.getRoomCode(); 
 
   showPage("gameLobby");
 }

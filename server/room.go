@@ -60,7 +60,7 @@ func CreateRoom(player *Player) *Room {
 			Y:      250,
 			Width:  10,
 			Height: 100,
-			Speed:  5,
+			Speed:  4,
 		},
 		Ball: Ball{
 			X:         400,
@@ -138,12 +138,23 @@ func (r *Room) updateGameState() {
 	if ballPaddleCollision(int(r.GameState.Ball.X), int(r.GameState.Ball.Y), int(r.GameState.Ball.Radius),
 		int(r.GameState.LeftPaddle.X), int(r.GameState.LeftPaddle.Y), int(r.GameState.LeftPaddle.Width),
 		int(r.GameState.LeftPaddle.Height)) {
-		r.GameState.Ball.VelocityX *= -1
+
+		if r.GameState.Ball.VelocityX > 0 {
+			r.GameState.Ball.VelocityX = -(r.GameState.Ball.VelocityX + 1)
+		} else {
+			r.GameState.Ball.VelocityX = -(r.GameState.Ball.VelocityX - 1)
+		}
 	}
+
 	if ballPaddleCollision(int(r.GameState.Ball.X), int(r.GameState.Ball.Y), int(r.GameState.Ball.Radius),
 		int(r.GameState.RightPaddle.X), int(r.GameState.RightPaddle.Y), int(r.GameState.RightPaddle.Width),
 		int(r.GameState.RightPaddle.Height)) {
-		r.GameState.Ball.VelocityX *= -1
+
+		if r.GameState.Ball.VelocityX > 0 {
+			r.GameState.Ball.VelocityX = -(r.GameState.Ball.VelocityX + 1)
+		} else {
+			r.GameState.Ball.VelocityX = -(r.GameState.Ball.VelocityX - 1)
+		}
 	}
 
 	//ball collision with top and bottom
@@ -159,11 +170,13 @@ func (r *Room) updateGameState() {
 		r.GameState.ScoreRight++
 		r.GameState.Ball.X = 400
 		r.GameState.Ball.Y = 300
+		r.GameState.Ball.VelocityX = 4
 	}
 	if r.GameState.Ball.X+r.GameState.Ball.Radius >= 800 {
 		r.GameState.ScoreLeft++
 		r.GameState.Ball.X = 400
 		r.GameState.Ball.Y = 300
+		r.GameState.Ball.VelocityX = -4
 	}
 
 	r.GameState.Ball.X += r.GameState.Ball.VelocityX
@@ -179,17 +192,17 @@ func (r *Room) updateGameState() {
 
 	//make the paddle move
 	if rightMoveTally < 0 && r.GameState.RightPaddle.Y+100 < 600 {
-		r.GameState.RightPaddle.Y += r.GameState.RightPaddle.Speed
+		r.GameState.RightPaddle.Y += (r.GameState.RightPaddle.Speed - float64(rightMoveTally))
 	}
 	if rightMoveTally > 0 && r.GameState.RightPaddle.Y > 0 {
-		r.GameState.RightPaddle.Y -= r.GameState.RightPaddle.Speed
+		r.GameState.RightPaddle.Y -= (r.GameState.RightPaddle.Speed + float64(rightMoveTally))
 	}
 
 	if leftMoveTally < 0 && r.GameState.LeftPaddle.Y+100 < 600 {
-		r.GameState.LeftPaddle.Y += r.GameState.LeftPaddle.Speed
+		r.GameState.LeftPaddle.Y += r.GameState.LeftPaddle.Speed - float64(leftMoveTally)
 	}
 	if leftMoveTally > 0 && r.GameState.LeftPaddle.Y > 0 {
-		r.GameState.LeftPaddle.Y -= r.GameState.LeftPaddle.Speed
+		r.GameState.LeftPaddle.Y -= r.GameState.LeftPaddle.Speed + float64(leftMoveTally)
 	}
 
 }

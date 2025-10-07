@@ -39,8 +39,9 @@ func HandleRoomJoin(hub *Hub, player *Player, msg []byte) {
 	room := hub.HubFindRoom(joinReq.RoomCode)
 	if room == nil {
 		resp := JoinRoomResp{
-			Type:   "joinedRoom",
-			Joined: false,
+			Type:     "joinedRoom",
+			Joined:   false,
+			RoomCode: player.Room.Code,
 		}
 
 		fmt.Println("sent:", resp)
@@ -52,8 +53,9 @@ func HandleRoomJoin(hub *Hub, player *Player, msg []byte) {
 	player.Room = room
 
 	resp := JoinRoomResp{
-		Type:   "joinedRoom",
-		Joined: true,
+		Type:     "joinedRoom",
+		Joined:   true,
+		RoomCode: player.Room.Code,
 	}
 
 	fmt.Println("sent:", resp)
@@ -156,8 +158,10 @@ func HandleMoveUpdate(hub *Hub, player *Player, msg []byte) {
 }
 
 func HandleGameToLobby(hub *Hub, player *Player) {
-	player.Room.done <- true
-	player.Room.gameRunning = false
+	if player.Room.gameRunning {
+		player.Room.done <- true
+		player.Room.gameRunning = false
+	}
 
 	player.Room.LeftTeam = player.Room.LeftTeam[:0]
 	player.Room.RightTeam = player.Room.RightTeam[:0]
