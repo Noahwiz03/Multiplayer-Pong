@@ -1,9 +1,194 @@
-.page{display: none;}
-.active{display:block;}
+/* Page switching */
+.page {
+  display: none;
+}
+.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-.pongGame{
+/* Global */
+/* Apply to the body for a full-page background */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  color: #e0e0e0;
+  background: linear-gradient(270deg, #0d0d1f, #2b2b4a, #3a2b6a, #0d0d1f);
+  background-size: 600% 600%;
+  animation: gradientWave 30s ease infinite;
+}
+
+/* Keyframes for smooth gradient animation */
+@keyframes gradientWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.teamButtons {
+  display: flex;
+  gap: 20px; /* space between buttons */
+  justify-content: center; /* center them horizontally */
+  margin-bottom: 15px; /* optional spacing below */
+}
+/* Title */
+.game-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+/* --- LANDING PAGE --- */
+.landingpagecontainer {
+  background: #111;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  padding: 40px 50px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Input field */
+/* Input field font styling */
+#roomCode {
+  padding: 10px;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background: #0a0a0a;
+  color: #fff;                 /* typed text color */
+  width: 180px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif; /* matches your arcade theme */
+  letter-spacing: 2px;          /* adds that retro pixel feel */
+}
+
+/* Placeholder styling */
+#roomCode::placeholder {
+  color: #bbb;                  /* lighter gray to differentiate */
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;    /* makes placeholder text match style */
+  letter-spacing: 2px;
+}
+
+#roomCode:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* Layout spacing */
+#CreateRoomBtn {
+  margin-bottom: 15px;
+}
+#JoinRoomBtn{
+  margin-bottom: 30px;
+}
+/* --- LOBBY PAGE --- */
+#gameLobby {
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+}
+
+/* --- GAME PAGE --- */
+#Game {
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pongGame {
   background-color: black;
   display: block;
-  margin:auto;
- align-content: center;
+  margin: 20px auto;
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* --- BUTTONS (shared across all pages) --- */
+.button,
+#joinLeftBtn,
+#joinRightBtn,
+#goBackBtn,
+#leaveGameBtn,
+#StartGameBtn,
+#ReturnGameToLobbyBtn {
+  background: linear-gradient(270deg, #0d0d1f, #2b2b4a, #3a2b6a, #0d0d1f);
+  background-size: 600% 600%;
+  animation: gradientWave 30s ease infinite; /* same as body */
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 8px 0;
+  width: 200px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effect: make it pop a bit */
+.button:hover,
+#joinLeftBtn:hover,
+#joinRightBtn:hover,
+#goBackBtn:hover,
+#leaveGameBtn:hover,
+#StartGameBtn:hover,
+#ReturnGameToLobbyBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  border-color: #fff;
+  color: #fff;
+}
+
+.button:active,
+#joinLeftBtn:active,
+#joinRightBtn:active,
+#goBackBtn:active,
+#leaveGameBtn:active,
+#StartGameBtn:active,
+#ReturnGameToLobbyBtn:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+}
+
+.lobbyItem {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #fff;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.hostMessage {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #fff; /* simple white for maximum contrast */
+  
+  /* subtle pulsing for a little life */
+  animation: pulseHost 2s infinite alternate;
+}
+
+@keyframes pulseHost {
+  from { opacity: 0.85; }
+  to   { opacity: 1; }
 }

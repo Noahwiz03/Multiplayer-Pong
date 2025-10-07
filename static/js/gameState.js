@@ -40,6 +40,17 @@ export function renderGameState(msg){
 	GameState.ScoreRight = state.ScoreRight;
 
 	ctx.clearRect(0,0, canvas.width, canvas.height);
+
+	ctx.beginPath();
+	// Draw the dotted center line
+	ctx.setLineDash([10, 15]); // 10px dash, 15px gap
+	ctx.moveTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.strokeStyle = "#ffffff57"; // white line
+	ctx.lineWidth = 4;
+	ctx.stroke();
+	ctx.setLineDash([]); // reset dash pattern
+
 	ctx.fillText(GameState.ScoreLeft.toString(), 250, 50);
 	ctx.fillText(GameState.ScoreRight.toString(), 550, 50);
 

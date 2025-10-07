@@ -41,7 +41,7 @@ func HandleRoomJoin(hub *Hub, player *Player, msg []byte) {
 		resp := JoinRoomResp{
 			Type:     "joinedRoom",
 			Joined:   false,
-			RoomCode: player.Room.Code,
+			RoomCode: joinReq.RoomCode,
 		}
 
 		fmt.Println("sent:", resp)

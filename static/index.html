@@ -8,25 +8,37 @@
 </head>
 <body>
   <div id="landing" class="page active">
-    <button id="CreateRoomBtn">Create Room</button>
-    <input id="roomCode" type="text" placeholder="Enter Room Code">
-    <button id="JoinRoomBtn">Join Room</button>
+    <div class="landingpagecontainer">
+      <h1 class="game-title">MULTIPLAYER PONG</h1>
+      <input  id="roomCode" type="text" placeholder="Room Code">
+      <button class="button" id="JoinRoomBtn">Join Room</button>
+      <button class="button" id="CreateRoomBtn">Create Room</button> 
+    </div>
   </div>
 
   <div id="gameLobby" class="page">
-    <button id="joinLeftBtn">Left Team</button>
-    <button id="joinRightBtn">Right Team</button>
-    <button id="goBackBtn">Go Back</button>
-    <p id = roomcodeDisplay></p>
-    <p id = hostDetector></p>
+      <div class="landingpagecontainer">
+      <h1 class="game-title">CHOOSE YOUR TEAM</h1>
+      <div class="teamButtons">
+        <button id="joinLeftBtn">Left Team</button>
+        <button id="joinRightBtn">Right Team</button>
+      </div>
+      <button id="goBackBtn">Go Back</button>
+      <div class="lobbyInfo">
+    <div id="roomcodeDisplay" class="lobbyItem">ROOM CODE: 584297</div>
+    <div id="hostDetector" class="lobbyItem hostMessage"></div>
+</div>
+    </div>
   </div>
 
   <div id="Game" class="page">
-    <p>you made it to the game</p>
-    <canvas id="PongCanvas" class="pongGame" width="800" height="600" ></canvas>
-    <button id="leaveGameBtn">Leave Game</button>
-    <button id="StartGameBtn">Start!</button>
-    <button id="ReturnGameToLobbyBtn">Return Game to Lobby</button>
+    <div class="landingpagecontainer">
+     <h1 class="game-title">GAME TIME</h1>
+      <canvas id="PongCanvas" class="pongGame" width="800" height="600" ></canvas>
+      <button id="StartGameBtn">Start!</button>
+      <button id="ReturnGameToLobbyBtn">Return Game to Lobby</button>
+      <button id="leaveGameBtn">Leave Game</button>
+    </div>
   </div>
 
  <script type="module" src="js/index.js"></script>
